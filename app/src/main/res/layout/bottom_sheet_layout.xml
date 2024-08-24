@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:background="@drawable/bg_drawer">
 
     <!-- Add your bottom sheet content here -->
     <TextView
@@ -22,8 +23,6 @@
         android:layout_weight="1"
         android:scrollbars="horizontal"
         />
-
-
 
     <Button
         android:id="@+id/bottom_sheet_button"

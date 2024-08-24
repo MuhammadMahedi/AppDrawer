@@ -1,15 +1,24 @@
 package com.prac.appdrawer;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageStats;
+import android.content.pm.PermissionInfo;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.storage.StorageManager;
+import android.provider.Settings;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -22,7 +31,10 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
 
+import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,7 +64,9 @@ public class MainActivity extends AppCompatActivity {
         mainView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.e("CheckingSwipe", "Touched" );
+                String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+
+                Log.e("CheckingSwipe", "Serial : " +androidId);
                 return gestureDetector.onTouchEvent(event);
             }
         });
@@ -121,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 //        return appInfoList;
 //    }
 
-private List<ApplicationInformations> getInstalledApps() {
+    private List<ApplicationInformations> getInstalledApps() {
     List<ApplicationInformations> appInfoList = new ArrayList<>();
     PackageManager packageManager = getPackageManager();
 
@@ -190,4 +204,105 @@ private List<ApplicationInformations> getInstalledApps() {
             return true;
         }
     }
+
+//    public static long getAppSize(Context context, String packageName) {
+//        try {
+//            PackageManager packageManager = context.getPackageManager();
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
+//                ApplicationInfo applicationInfo = packageInfo.applicationInfo;
+//                StorageManager storageManager = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
+//                Method getStorageStatsMethod = storageManager.getClass().getMethod("queryStatsForPackage", String.class, ApplicationInfo.class);
+//                Object storageStats = getStorageStatsMethod.invoke(storageManager, applicationInfo.storageUuid, packageName);
+//                Method getCodeBytesMethod = storageStats.getClass().getMethod("getCodeBytes");
+//                Method getDataBytesMethod = storageStats.getClass().getMethod("getDataBytes");
+//                Method getCacheBytesMethod = storageStats.getClass().getMethod("getCacheBytes");
+//                long codeSize = (long) getCodeBytesMethod.invoke(storageStats);
+//                long dataSize = (long) getDataBytesMethod.invoke(storageStats);
+//                long cacheSize = (long) getCacheBytesMethod.invoke(storageStats);
+//                return codeSize + dataSize + cacheSize;
+//            } else {
+//                return 0;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return -1;
+//        }
+//    }
+//
+//    public static UsageStats getAppUsageStats(Context context, String packageName) {
+//        // Get the UsageStatsManager
+//        UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
+//
+//        // Define the time range to query usage stats
+//        Calendar calendar = Calendar.getInstance();
+//        long endTime = calendar.getTimeInMillis();
+//        calendar.add(Calendar.DAY_OF_MONTH, -1);
+//        long startTime = calendar.getTimeInMillis();
+//
+//        // Query the usage stats
+//        List<UsageStats> usageStatsList = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, startTime, endTime);
+//
+//        // Find the UsageStats for the specified package name
+//        for (UsageStats usageStats : usageStatsList) {
+//            if (usageStats.getPackageName().equals(packageName)) {
+//                return usageStats;
+//            }
+//        }
+//
+//        // If no usage stats found for the package, return null
+//        return null;
+//    }
+
+
+//    final PackageManager pm = context.getPackageManager();
+//    ApplicationInfo applicationInfo = pm.getApplicationInfo(context.getPackageName(), 0);
+//    File file = new File(applicationInfo.publicSourceDir);
+//    long size = file.length();
+
+    public String getAppSize(String packageName) {
+        long appSize = 0;
+
+        try {
+            ApplicationInfo appInfo = this.getPackageManager().getApplicationInfo(packageName, 0);
+
+            Log.e("AppSize-sourceDir initial", "getAppSize: "+ appSize );
+            // Get App File size
+            appSize += getFileSize(new File(appInfo.sourceDir));
+            Log.e("AppSize-sourceDir", "getAppSize: "+ appSize );
+
+            // Get App Data size
+            appSize += getFileSize(new File(appInfo.dataDir));
+            Log.e("AppSize-dataDir", "getAppSize: "+ appSize );
+
+            // Get App Cache size
+            appSize += getFileSize(this.getCacheDir());
+            Log.e("AppSize-cacheDir", "getAppSize: "+ appSize );
+
+            // Get External Cache size if exists
+            if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+                appSize += getFileSize(this.getExternalCacheDir());
+            }
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return Formatter.formatFileSize(MainActivity.this, appSize);
+    }
+
+    private long getFileSize(File file) {
+        long size = 0;
+        if (file != null && file.exists()) {
+            if (file.isDirectory()) {
+                for (File child : file.listFiles()) {
+                    size += getFileSize(child);
+                }
+            } else {
+                size += file.length();
+            }
+        }
+        return size;
+    }
 }
+
