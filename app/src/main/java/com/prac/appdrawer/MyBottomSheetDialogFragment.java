@@ -26,7 +26,7 @@ public class MyBottomSheetDialogFragment extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.bottom_sheet_layout, container, false);
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new GridLayoutManager(requireContext().getApplicationContext(), 6, GridLayoutManager.HORIZONTAL, false));
+        recyclerView.setLayoutManager(new GridLayoutManager(requireContext().getApplicationContext(), 5, GridLayoutManager.VERTICAL, false));
 
         AppAdapter appAdapter = new AppAdapter(requireContext().getApplicationContext(), appList, new AppAdapter.OnItemClickListener() {
             @Override
@@ -36,7 +36,6 @@ public class MyBottomSheetDialogFragment extends BottomSheetDialogFragment {
         });
         recyclerView.setAdapter(appAdapter);
 
-        view.findViewById(R.id.bottom_sheet_button).setOnClickListener(v -> dismiss());
 
         return view;
     }

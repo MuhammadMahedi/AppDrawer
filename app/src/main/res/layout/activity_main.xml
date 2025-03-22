@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/commonBg"
     android:gravity="center">
 
     <com.airbnb.lottie.LottieAnimationView
@@ -30,6 +31,7 @@
         android:text="Swipe Up to Open the App Drawer"
         android:textAlignment="center"
         android:textSize="18sp"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="@+id/lottieAnimationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
