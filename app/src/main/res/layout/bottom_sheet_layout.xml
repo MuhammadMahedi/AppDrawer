@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="#F8F7F2">
+    android:background="@drawable/white_shape_rounded">
 
     <!-- Add your bottom sheet content here -->
     <TextView
