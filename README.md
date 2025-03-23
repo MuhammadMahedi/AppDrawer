@@ -14,7 +14,10 @@ This Android project demonstrates how to display all launchable applications on 
 - **UI Components**: `BottomSheetDialogFragment`, `RecyclerView`  
 - **System Services**: `PackageManager`
 
-## 📸 ScreenShots
+## 🖼️ Screenshots  
+| Swipe Up Gesture | App List Display |
+|-----------------|-----------------|
+| ![Screenshot 1](screenshots/home.jpg) | ![Screenshot 2](screenshots/applist.jpg) |
 
 ## 🚀 Getting Started  
 
