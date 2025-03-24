@@ -23,7 +23,7 @@ This Android project demonstrates how to display all launchable applications on 
 
 1️⃣ Clone the repository:  
 ```sh
-git clone https://github.com/yourusername/your-repository.git
+git clone https://github.com/MuhammadMahedi/AppDrawer.git
 ```
 
 2️⃣ Open in **Android Studio** and build the project.  
